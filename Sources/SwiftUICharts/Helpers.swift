@@ -57,12 +57,30 @@ public struct GradientColors {
 }
 
 public struct Styles {
+    public static let lineChartStyleCustom = ChartStyle(customStyle: true)
+    
     public static let lineChartStyleOne = ChartStyle(
-        backgroundColor: Color.white,
+        backgroundColor: Color.clear,
         accentColor: Colors.OrangeStart,
         secondGradientColor: Colors.OrangeEnd,
         textColor: Color.black,
         legendTextColor: Color.gray,
+        dropShadowColor: Color.gray)
+    
+    public static let lineChartStyleTwo = ChartStyle(
+        backgroundColor: Color.white,
+        accentColor: Colors.GradientNeonBlue,
+        secondGradientColor: Colors.GradientPurple,
+        textColor: Color.black,
+        legendTextColor: Color.gray,
+        dropShadowColor: Color.gray)
+    
+    public static let lineChartStyleThree = ChartStyle(
+        backgroundColor: Color(hexString: "#36534D"), //3B5147, 313D34
+        accentColor: Color(hexString: "#FFD603"),
+        secondGradientColor: Color(hexString: "#FFCA04"),
+        textColor: Color.white,
+        legendTextColor: Color(hexString: "#D2E5E1"),
         dropShadowColor: Color.gray)
     
     public static let barChartStyleOrangeLight = ChartStyle(
@@ -146,6 +164,17 @@ public struct ChartForm {
     #endif
 }
 
+extension Color {
+    static var random: Color {
+        return Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
+    }
+}
+
+
 public class ChartStyle {
     public var backgroundColor: Color
     public var accentColor: Color
@@ -154,6 +183,7 @@ public class ChartStyle {
     public var legendTextColor: Color
     public var dropShadowColor: Color
     public weak var darkModeStyle: ChartStyle?
+    public var customStyle = false
     
     public init(backgroundColor: Color, accentColor: Color, secondGradientColor: Color, textColor: Color, legendTextColor: Color, dropShadowColor: Color){
         self.backgroundColor = backgroundColor
@@ -162,6 +192,30 @@ public class ChartStyle {
         self.textColor = textColor
         self.legendTextColor = legendTextColor
         self.dropShadowColor = dropShadowColor
+    }
+    
+    public init(customStyle: Bool){
+        self.backgroundColor = Color.white
+        self.accentColor = Color.random
+        let randomColor = Color.random
+        self.gradientColor = GradientColor(start: randomColor, end: randomColor)
+        self.legendTextColor = Color.gray
+        self.textColor = Color.black
+        self.dropShadowColor = Color.gray
+        
+        self.customStyle = true
+    }
+    
+    public init(customStyle: Bool, color: Color){
+        self.backgroundColor = Color.white
+        self.accentColor = Color.random
+        let randomColor = color
+        self.gradientColor = GradientColor(start: randomColor, end: randomColor)
+        self.legendTextColor = Color.gray
+        self.textColor = Color.black
+        self.dropShadowColor = Color.gray
+        
+        self.customStyle = true
     }
     
     public init(backgroundColor: Color, accentColor: Color, gradientColor: GradientColor, textColor: Color, legendTextColor: Color, dropShadowColor: Color){
