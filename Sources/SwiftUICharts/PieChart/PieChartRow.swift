@@ -9,14 +9,18 @@
 import SwiftUI
 
 public struct PieChartRow : View {
-    var data: [Double]
+    struct SliceData {
+        let value: Double
+        let coinName: String
+        let color: Color
+    }
+    var data: [SliceData]
     var backgroundColor: Color
-    var accentColor: Color
     var slices: [PieSlice] {
         var tempSlices:[PieSlice] = []
         var lastEndDeg:Double = 0
-        let maxValue = data.reduce(0, +)
-        for slice in data {
+        let maxValue = data.map({ $0.value }).reduce(0, +)
+        for slice in data.map({ $0.value }) {
             let normalized:Double = Double(slice)/Double(maxValue)
             let startDeg = lastEndDeg
             let endDeg = lastEndDeg + (normalized * 360)
@@ -26,42 +30,60 @@ public struct PieChartRow : View {
         return tempSlices
     }
     
-    @Binding var showValue: Bool
-    @Binding var currentValue: Double
+    var showValue: Bool = false
+    var currentValue: Double = 0
+    let columns = [
+        GridItem(.adaptive(minimum: 50))
+    ]
     
-    @State private var currentTouchedIndex = -1 {
-        didSet {
-            if oldValue != currentTouchedIndex {
-                showValue = currentTouchedIndex != -1
-                currentValue = showValue ? slices[currentTouchedIndex].value : 0
+    public var body: some View {
+        HStack {
+            GeometryReader { geometry in
+                ZStack{
+                    ForEach(0..<self.slices.count){ i in
+                        PieChartCell(rect: geometry.frame(in: .local), startDeg: self.slices[i].startDeg, endDeg: self.slices[i].endDeg, index: i, backgroundColor: self.backgroundColor, accentColor: self.data[i].color)
+                    }
+                }
             }
+            .padding(.trailing)
+            distributionText
+                .font(Font.system(.body, design: .monospaced).monospacedDigit())
         }
     }
     
-    public var body: some View {
-        GeometryReader { geometry in
-            ZStack{
-                ForEach(0..<self.slices.count){ i in
-                    PieChartCell(rect: geometry.frame(in: .local), startDeg: self.slices[i].startDeg, endDeg: self.slices[i].endDeg, index: i, backgroundColor: self.backgroundColor,accentColor: self.accentColor)
-                        .scaleEffect(self.currentTouchedIndex == i ? 1.1 : 1)
-                        .animation(Animation.spring())
-                }
+    init(globalData: Global) {
+        self.data = globalData.market_cap_percentage
+            .sorted(by: { $0.value > $1.value })
+            .map({ key, value in
+            return PieChartRow.SliceData(value: value, coinName: key, color: Color.random)
+        })
+        let total = self.data
+            .reduce(into: 0.0) { partialResult, sliceData in
+                partialResult += sliceData.value
             }
-            .gesture(DragGesture()
-                        .onChanged({ value in
-                            let rect = geometry.frame(in: .local)
-                            let isTouchInPie = isPointInCircle(point: value.location, circleRect: rect)
-                            if isTouchInPie {
-                                let touchDegree = degree(for: value.location, inCircleRect: rect)
-                                self.currentTouchedIndex = self.slices.firstIndex(where: { $0.startDeg < touchDegree && $0.endDeg > touchDegree }) ?? -1
-                            } else {
-                                self.currentTouchedIndex = -1
-                            }
-                        })
-                        .onEnded({ value in
-                            self.currentTouchedIndex = -1
-                        }))
+        if total > 0 {
+            self.data.append(PieChartRow.SliceData(value: (100.0-total), coinName: "others", color: .white))
         }
+        
+        self.backgroundColor = .clear
+    }
+    
+    var distributionText: Text {
+        var output = Text("")
+        for i in 0..<self.slices.count {
+            let coinData = self.data[i]
+            let newText =
+            Text("\(coinData.coinName) ")
+                .bold()
+                .foregroundColor(coinData.color)
+            +
+            Text("\(coinData.value, specifier: "%.1f")")
+                .foregroundColor(.secondary)
+            +
+            Text((i==self.slices.count-1) ? " " : ", ")
+            output = output + newText
+        }
+        return output
     }
 }
 
@@ -69,10 +91,15 @@ public struct PieChartRow : View {
 struct PieChartRow_Previews : PreviewProvider {
     static var previews: some View {
         Group {
-            PieChartRow(data:[8,23,54,32,12,37,7,23,43], backgroundColor: Color(red: 252.0/255.0, green: 236.0/255.0, blue: 234.0/255.0), accentColor: Color(red: 225.0/255.0, green: 97.0/255.0, blue: 76.0/255.0), showValue: Binding.constant(false), currentValue: Binding.constant(0))
-                .frame(width: 100, height: 100)
-            PieChartRow(data:[0], backgroundColor: Color(red: 252.0/255.0, green: 236.0/255.0, blue: 234.0/255.0), accentColor: Color(red: 225.0/255.0, green: 97.0/255.0, blue: 76.0/255.0), showValue: Binding.constant(false), currentValue: Binding.constant(0))
-                .frame(width: 100, height: 100)
+            PieChartRow(globalData: Global(market_cap_change_percentage_24h_usd: 5,
+                                           market_cap_percentage: [
+                                            "btc":40.0,
+                                            "eth":20.0,
+                                            "ada":10.0,
+                                            "xxx":10.0,
+                                            "xxx2":10.0,
+                                            "xxx3":10.0
+                                           ]))
         }
     }
 }
