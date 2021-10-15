@@ -12,10 +12,12 @@ public struct PieChartRow : View {
     struct SliceData {
         let value: Double
         let coinName: String
-        let color: Color
+        var color: SwiftUI.Color {
+            ManagedColors.shared.color(symbol: coinName)
+        }
     }
     var data: [SliceData]
-    var backgroundColor: Color
+    var backgroundColor: SwiftUI.Color
     var slices: [PieSlice] {
         var tempSlices:[PieSlice] = []
         var lastEndDeg:Double = 0
@@ -55,14 +57,17 @@ public struct PieChartRow : View {
         self.data = globalData.market_cap_percentage
             .sorted(by: { $0.value > $1.value })
             .map({ key, value in
-            return PieChartRow.SliceData(value: value, coinName: key, color: Color.random)
-        })
+                return PieChartRow.SliceData(value: value,
+                                             coinName: key)
+            })
         let total = self.data
             .reduce(into: 0.0) { partialResult, sliceData in
                 partialResult += sliceData.value
             }
         if total > 0 {
-            self.data.append(PieChartRow.SliceData(value: (100.0-total), coinName: "others", color: .white))
+            self.data.append(PieChartRow.SliceData(
+                value: (100.0-total),
+                coinName: "others"))
         }
         
         self.backgroundColor = .clear

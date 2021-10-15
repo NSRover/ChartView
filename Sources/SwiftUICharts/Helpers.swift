@@ -196,8 +196,8 @@ public class ChartStyle {
     
     public init(customStyle: Bool){
         self.backgroundColor = Color.white
-        self.accentColor = Color.random
-        let randomColor = Color.random
+        self.accentColor = Color.green
+        let randomColor = Color.green
         self.gradientColor = GradientColor(start: randomColor, end: randomColor)
         self.legendTextColor = Color.gray
         self.textColor = Color.black
@@ -208,7 +208,7 @@ public class ChartStyle {
     
     public init(customStyle: Bool, color: Color){
         self.backgroundColor = Color.white
-        self.accentColor = Color.random
+        self.accentColor = Color.green
         let randomColor = color
         self.gradientColor = GradientColor(start: randomColor, end: randomColor)
         self.legendTextColor = Color.gray
