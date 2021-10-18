@@ -15,11 +15,11 @@ public struct Line: View {
     @Binding var showIndicator: Bool
     @Binding var minDataValue: Double?
     @Binding var maxDataValue: Double?
+    var padding:CGFloat = 30
     @State private var showFull: Bool = false
     @State var showBackground: Bool = true
     var gradient: GradientColor = GradientColor(start: Colors.GradientPurple, end: Colors.GradientNeonBlue)
     var index:Int = 0
-    let padding:CGFloat = 30
     var curvedLines: Bool = true
     var stepWidth: CGFloat {
         if data.points.count < 2 {
@@ -100,7 +100,14 @@ public struct Line: View {
 struct Line_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader{ geometry in
-            Line(data: ChartData(points: [12,-230,10,54]), frame: .constant(geometry.frame(in: .local)), touchLocation: .constant(CGPoint(x: 100, y: 12)), showIndicator: .constant(true), minDataValue: .constant(nil), maxDataValue: .constant(nil))
-        }.frame(width: 320, height: 160)
+            Line(data: ChartData(points: [10,20,30,40,50]),
+                 frame: .constant(geometry.frame(in: .local)),
+                 touchLocation: .constant(CGPoint(x: 200, y: 12)),
+                 showIndicator: .constant(true),
+                 minDataValue: .constant(nil),
+                 maxDataValue: .constant(nil), padding: 10)
+        }
+        .background(Color.black)
+        .frame(width: 320, height: 160)
     }
 }

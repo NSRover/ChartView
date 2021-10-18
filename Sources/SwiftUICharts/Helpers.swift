@@ -67,6 +67,14 @@ public struct Styles {
         legendTextColor: Color.gray,
         dropShadowColor: Color.gray)
     
+    public static let lineChartStyleX = ChartStyle(
+            backgroundColor: Color.clear,
+            accentColor: Color(UIColor.label),
+            secondGradientColor: .white,
+            textColor: Color.black,
+            legendTextColor: Color.gray,
+            dropShadowColor: Color.gray)
+    
     public static let lineChartStyleTwo = ChartStyle(
         backgroundColor: Color.white,
         accentColor: Colors.GradientNeonBlue,
