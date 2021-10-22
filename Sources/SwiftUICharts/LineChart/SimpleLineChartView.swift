@@ -15,7 +15,7 @@ public struct SimpleLineChartView: View {
     public var darkModeStyle: ChartStyle
     
     public var valueSpecifier:String
-    
+    private let heightRatio:Double
     @State private var touchLocation:CGPoint = .zero
     @State private var showIndicatorDot: Bool = false
     @State private var currentValue: Double = 2 {
@@ -28,8 +28,9 @@ public struct SimpleLineChartView: View {
     }
     public init(data: [Double],
                 style: ChartStyle = Styles.lineChartStyleOne,
-                valueSpecifier: String? = "%.1f") {
-        
+                valueSpecifier: String? = "%.1f",
+                heightRatio: Double = 1.3) {
+        self.heightRatio = heightRatio
         self.data = ChartData(points: data)
         self.style = style
         self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : Styles.lineViewDarkMode
@@ -61,7 +62,7 @@ public struct SimpleLineChartView: View {
                          gradient: self.style.gradientColor
                     )
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height/1.3)
+                .frame(width: geometry.size.width, height: geometry.size.height/heightRatio)
                 .offset(x: 0, y: 0)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
