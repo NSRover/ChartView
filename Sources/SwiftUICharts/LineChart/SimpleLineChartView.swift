@@ -16,6 +16,8 @@ public struct SimpleLineChartView: View {
     
     public var valueSpecifier:String
     private let heightRatio:Double
+    private let padding: Double
+    private let midlineColor: Color?
     @State private var touchLocation:CGPoint = .zero
     @State private var showIndicatorDot: Bool = false
     @State private var currentValue: Double = 2 {
@@ -29,45 +31,34 @@ public struct SimpleLineChartView: View {
     public init(data: [Double],
                 style: ChartStyle = Styles.lineChartStyleOne,
                 valueSpecifier: String? = "%.1f",
-                heightRatio: Double = 1.3) {
+                heightRatio: Double = 1.3,
+                padding: Double = 30.0,
+                midlineColor: Color? = nil) {
         self.heightRatio = heightRatio
         self.data = ChartData(points: data)
         self.style = style
         self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : Styles.lineViewDarkMode
         self.valueSpecifier = valueSpecifier!
+        self.padding = padding
+        self.midlineColor = midlineColor
     }
     
     public var body: some View {
         GeometryReader{ geometry in
-            VStack(alignment: .leading){
-                if(self.showIndicatorDot){
-                    HStack{
-                        Spacer()
-                        Text("\(self.currentValue, specifier: self.valueSpecifier)")
-                            .font(.system(size: 41, weight: .bold, design: .default))
-                            .offset(x: 0, y: 30)
-                        Spacer()
-                    }
-                    .transition(.scale)
-                }
-                Spacer()
-                GeometryReader{ geometry in
-                    Line(data: self.data,
-                         frame: .constant(geometry.frame(in: .local)),
-                         touchLocation: self.$touchLocation,
-                         showIndicator: self.$showIndicatorDot,
-                         minDataValue: .constant(nil),
-                         maxDataValue: .constant(nil),
-                         showBackground: false,
-                         gradient: self.style.gradientColor
-                    )
-                }
-                .frame(width: geometry.size.width, height: geometry.size.height/heightRatio)
-                .offset(x: 0, y: 0)
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
+            Line(data: self.data,
+                 frame: .constant(geometry.frame(in: .local)),
+                 touchLocation: self.$touchLocation,
+                 showIndicator: self.$showIndicatorDot,
+                 minDataValue: .constant(nil),
+                 maxDataValue: .constant(nil),
+                 midlineColor: midlineColor,
+                 padding: padding,
+                 showBackground: false,
+                 gradient: self.style.gradientColor
+            )
         }
     }
+    
     
     @discardableResult func getClosestDataPoint(toPoint: CGPoint, width:CGFloat, height: CGFloat) -> CGPoint {
         let points = self.data.onlyPoints()
@@ -86,11 +77,15 @@ public struct SimpleLineChartView: View {
 struct SimpleLineChartView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-                        SimpleLineChartView(data: [1,2,3,4,5,6,7,8,9,10])
-                            .environment(\.colorScheme, .light)
+            SimpleLineChartView(data: [0.0, 0.0, 3.6, 3.0, -5.4, -2.9, 0.7, -0.7],
+                                heightRatio: 1.3,
+                                midlineColor: .white)
+                .environment(\.colorScheme, .light)
+                .frame(height: 400)
+                .background(Color.black)
             
-//            SimpleLineChartView(data: [282.502, 284.495, 283.51, 285.019, 285.197, 286.118, 288.737, 288.455, 289.391, 287.691, 285.878, 286.46, 286.252, 284.652, 284.129, 284.188], rateValue: nil)
-//                .environment(\.colorScheme, .light)
+            //            SimpleLineChartView(data: [282.502, 284.495, 283.51, 285.019, 285.197, 286.118, 288.737, 288.455, 289.391, 287.691, 285.878, 286.46, 286.252, 284.652, 284.129, 284.188], rateValue: nil)
+            //                .environment(\.colorScheme, .light)
         }
     }
 }

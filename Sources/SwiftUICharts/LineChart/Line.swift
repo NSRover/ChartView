@@ -15,6 +15,8 @@ public struct Line: View {
     @Binding var showIndicator: Bool
     @Binding var minDataValue: Double?
     @Binding var maxDataValue: Double?
+    var midlineColor: Color? = nil
+    
     var padding:CGFloat = 30
     @State private var showFull: Bool = false
     @State var showBackground: Bool = true
@@ -49,6 +51,10 @@ public struct Line: View {
         }
         return 0
     }
+    var linePath: Path {
+        Path.zerolinePathWithPoints(points: self.data.onlyPoints(),
+                                    step: CGPoint(x: stepWidth, y: stepHeight))
+    }
     var path: Path {
         let points = self.data.onlyPoints()
         return curvedLines ? Path.quadCurvedPathWithPoints(points: points, step: CGPoint(x: stepWidth, y: stepHeight), globalOffset: minDataValue) : Path.linePathWithPoints(points: points, step: CGPoint(x: stepWidth, y: stepHeight))
@@ -60,15 +66,16 @@ public struct Line: View {
     
     public var body: some View {
         ZStack {
-            if(self.showFull && self.showBackground){
-                self.closedPath
-                    .fill(LinearGradient(gradient: Gradient(colors: [Colors.GradientUpperBlue, .white]), startPoint: .bottom, endPoint: .top))
-                    .opacity(0.5)
-                    .rotationEffect(.degrees(180), anchor: .center)
-                    .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-                    .transition(.opacity)
-                    .animation(.easeIn(duration: 1.6))
-            }
+//            if(self.showFull && self.showBackground){
+//                self.closedPath
+//                    .fill(LinearGradient(gradient: Gradient(colors: [Colors.GradientUpperBlue, .white]), startPoint: .bottom, endPoint: .top))
+//                    .opacity(0.5)
+//                    .rotationEffect(.degrees(180), anchor: .center)
+//                    .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+//                    .transition(.opacity)
+//                    .animation(.easeIn(duration: 1.6))
+//            }
+            
             self.path
                 .trim(from: 0, to: self.showFull ? 1:0)
                 .stroke(LinearGradient(gradient: gradient.getGradient(), startPoint: .leading, endPoint: .trailing) ,style: StrokeStyle(lineWidth: 3, lineJoin: .round))
@@ -77,10 +84,20 @@ public struct Line: View {
                 .animation(Animation.easeOut(duration: 1.2).delay(Double(self.index)*0.4))
                 .onAppear {
                     self.showFull = true
+                }
+                .onDisappear {
+                    self.showFull = false
+                }
+            
+            if let midlineColor = midlineColor {
+                self.linePath
+                    .trim(from: 0, to: 1)
+                    .stroke(style: StrokeStyle(lineWidth: 2, dash: [5]))
+                    .foregroundColor(midlineColor.opacity(0.7))
+                    .rotationEffect(.degrees(180), anchor: .center)
+                    .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
             }
-            .onDisappear {
-                self.showFull = false
-            }
+            
             if(self.showIndicator) {
                 IndicatorPoint()
                     .position(self.getClosestPointOnPath(touchLocation: self.touchLocation))
@@ -100,12 +117,12 @@ public struct Line: View {
 struct Line_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader{ geometry in
-            Line(data: ChartData(points: [10,20,30,40,50]),
+            Line(data: ChartData(points: [0,0,-2.3,0,5,1]),
                  frame: .constant(geometry.frame(in: .local)),
                  touchLocation: .constant(CGPoint(x: 200, y: 12)),
                  showIndicator: .constant(true),
                  minDataValue: .constant(nil),
-                 maxDataValue: .constant(nil), padding: 10)
+                 maxDataValue: .constant(nil), padding: 0)
         }
         .background(Color.black)
         .frame(width: 320, height: 160)
