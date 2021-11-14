@@ -18,6 +18,8 @@ public struct SimpleLineChartView: View {
     private let heightRatio:Double
     private let padding: Double
     private let midlineColor: Color?
+    private var minDataValue: Double?
+    private var maxDataValue: Double?
     @State private var touchLocation:CGPoint = .zero
     @State private var showIndicatorDot: Bool = false
     @State private var currentValue: Double = 2 {
@@ -33,7 +35,9 @@ public struct SimpleLineChartView: View {
                 valueSpecifier: String? = "%.1f",
                 heightRatio: Double = 1.3,
                 padding: Double = 30.0,
-                midlineColor: Color? = nil) {
+                midlineColor: Color? = nil,
+                minDataValue: Double? = nil,
+                maxDataValue: Double? = nil) {
         self.heightRatio = heightRatio
         self.data = ChartData(points: data)
         self.style = style
@@ -41,6 +45,8 @@ public struct SimpleLineChartView: View {
         self.valueSpecifier = valueSpecifier!
         self.padding = padding
         self.midlineColor = midlineColor
+        self.minDataValue = minDataValue
+        self.maxDataValue = maxDataValue
     }
     
     public var body: some View {
@@ -49,8 +55,8 @@ public struct SimpleLineChartView: View {
                  frame: .constant(geometry.frame(in: .local)),
                  touchLocation: self.$touchLocation,
                  showIndicator: self.$showIndicatorDot,
-                 minDataValue: .constant(nil),
-                 maxDataValue: .constant(nil),
+                 minDataValue: .constant(minDataValue),
+                 maxDataValue: .constant(maxDataValue),
                  midlineColor: midlineColor,
                  padding: padding,
                  showBackground: false,
@@ -77,9 +83,7 @@ public struct SimpleLineChartView: View {
 struct SimpleLineChartView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SimpleLineChartView(data: [0.0, 0.0, 3.6, 3.0, -5.4, -2.9, 0.7, -0.7],
-                                heightRatio: 1.3,
-                                midlineColor: .white)
+            SimpleLineChartView(data: [0.0, 0.0, 3.6, 3.0, -5.4, -2.9, 0.7, -0.7], minDataValue: -10)
                 .environment(\.colorScheme, .light)
                 .frame(height: 400)
                 .background(Color.black)
