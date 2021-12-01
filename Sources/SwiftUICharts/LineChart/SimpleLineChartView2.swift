@@ -61,13 +61,6 @@ public struct SimpleLineChartView2: View {
                 .clipShape(RoundedRectangle(cornerRadius: 5))
                 .overlay(RoundedRectangle(cornerRadius: 5)
                             .stroke(Color(uiColor: .tertiarySystemBackground)))
-                HStack {
-                    Text(startTitle)
-                    Spacer()
-                    Text("Present")
-                }
-                .font(.caption2)
-                .foregroundColor(.secondary)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
