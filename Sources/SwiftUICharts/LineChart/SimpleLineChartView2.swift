@@ -15,7 +15,6 @@ public struct SimpleLineChartView2: View {
     public var darkModeStyle: ChartStyle
     
     public var valueSpecifier:String
-    private let startTitle: String
     @State private var touchLocation:CGPoint = .zero
     @State private var showIndicatorDot: Bool = false
     @State private var currentValue: Double = 2 {
@@ -27,10 +26,8 @@ public struct SimpleLineChartView2: View {
         }
     }
     public init(data: [Double],
-                startTitle: String,
                 style: ChartStyle = Styles.lineChartStyleX,
                 valueSpecifier: String? = "%.1f") {
-        self.startTitle = startTitle
         self.data = ChartData(points: data)
         self.style = style
         self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : Styles.lineViewDarkMode
@@ -83,7 +80,7 @@ public struct SimpleLineChartView2: View {
 struct SimpleLineChartView2_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SimpleLineChartView2(data: [70,71,72,73,74,75,76,77,78,90,100], startTitle: "Oct 2021")
+            SimpleLineChartView2(data: [70,71,72,73,74,75,76,77,78,90,100])
                 .frame(height: 80)
                 .environment(\.colorScheme, .light)
         }
