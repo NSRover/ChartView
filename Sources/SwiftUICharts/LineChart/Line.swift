@@ -117,7 +117,7 @@ public struct Line: View {
 struct Line_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader{ geometry in
-            Line(data: ChartData(points: [0,0,-2.3,0,5,1]),
+            Line(data: ChartData(points: [0.0, 0.0, 3.6, 3.0, -5.4, -2.9, 0.7, -0.7]),
                  frame: .constant(geometry.frame(in: .local)),
                  touchLocation: .constant(CGPoint(x: 200, y: 12)),
                  showIndicator: .constant(true),

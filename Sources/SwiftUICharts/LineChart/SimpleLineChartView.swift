@@ -83,7 +83,7 @@ public struct SimpleLineChartView: View {
 struct SimpleLineChartView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SimpleLineChartView(data: [0.0, 0.0, 3.6, 3.0, -5.4, -2.9, 0.7, -0.7], minDataValue: -10)
+            SimpleLineChartView(data: [0.0, 0.0, 3.6, 3.0, -5.4, -2.9, 0.7, -0.7], minDataValue: -10, maxDataValue: 5)
                 .environment(\.colorScheme, .light)
                 .frame(height: 400)
                 .background(Color.black)
